@@ -1,0 +1,100 @@
+﻿<Window x:Class="DmpPlayground.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DmpPlayground"
+        mc:Ignorable="d"
+        Title="DMP Playground" Height="600" Width="800"
+        MinHeight="480" MinWidth="640"
+        Loaded="OnLoaded"
+        Icon="App.ico">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:CustomCommands.CopyAToBCommand}"
+                        Executed="CopyAToBCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.DiffCommand}"
+                        Executed="DiffCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.CleanDiffCommand}"
+                        Executed="CleanDiffCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.EditOperationsCommand}"
+                        Executed="EditOperationsCommand_Executed"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="Copy A&gt;B"
+                          Command="{x:Static local:CustomCommands.CopyAToBCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Diffing">
+                <MenuItem Header="_Plain diff"
+                          Command="{x:Static local:CustomCommands.DiffCommand}"/>
+                <MenuItem Header="Plain diff + semantic _cleanup"
+                          Command="{x:Static local:CustomCommands.CleanDiffCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Move's in edits"
+                          IsCheckable="True"
+                          IsChecked="{Binding Path=IsMoveEnabled,
+                            Mode=TwoWay,
+                            UpdateSourceTrigger=PropertyChanged}"/>
+                <MenuItem Header="_Replace's in edits"
+                          IsCheckable="True"
+                          IsChecked="{Binding Path=IsReplaceEnabled,
+                            Mode=TwoWay,
+                            UpdateSourceTrigger=PropertyChanged}"/>
+                <MenuItem Header="_Edit operations"
+                          Command="{x:Static local:CustomCommands.EditOperationsCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBox TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     AcceptsReturn="True"
+                     Text="{Binding Path=TextA,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                     FontSize="16"
+                     Margin="2"
+                     Name="_txtA"/>
+
+                <GridSplitter HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Width="2"
+                          Grid.Column="1"/>
+
+                <TextBox TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     Grid.Column="2"
+                     AcceptsReturn="True"
+                     Text="{Binding Path=TextB,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                     FontSize="16"
+                     Margin="2"
+                     Name="_txtB"/>
+            </Grid>
+            <GridSplitter HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Height="2"
+                          Grid.Row="1"/>
+            <TextBox Grid.Row="2" Margin="2" IsReadOnly="True"
+                     Text="{Binding Path=Result,Mode=OneWay}"
+                     VerticalScrollBarVisibility="Auto"
+                     FontSize="16"
+                     Background="#d1e6e0"/>
+        </Grid>
+    </Grid>
+</Window>
