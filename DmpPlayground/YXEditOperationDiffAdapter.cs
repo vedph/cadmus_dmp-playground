@@ -1,8 +1,7 @@
 ﻿using DiffMatchPatch;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace DmpPlayground
 {
@@ -14,8 +13,6 @@ namespace DmpPlayground
     public sealed class YXEditOperationDiffAdapter :
         IEditOperationDiffAdapter<YXEditOperation>
     {
-        private readonly Regex _lineRegex;
-
         /// <summary>
         /// Gets or sets a value indicating whether the move edit operation
         /// is enabled. Default is true.
@@ -34,7 +31,6 @@ namespace DmpPlayground
         /// </summary>
         public YXEditOperationDiffAdapter()
         {
-            _lineRegex = new Regex(@"([^\r\n]*)(\r?\n)?");
             IsMoveEnabled = true;
             IsReplaceEnabled = true;
         }
@@ -74,6 +70,7 @@ namespace DmpPlayground
 
         private void DetectForwardMoves(IList<YXEditOperation> operations)
         {
+            if (operations.Count == 0) return;
             int maxGroupId = operations.Max(o => o.GroupId);
 
             for (int i = 0; i < operations.Count - 1; i++)
@@ -95,6 +92,7 @@ namespace DmpPlayground
 
         private void DetectBackwardMoves(IList<YXEditOperation> operations)
         {
+            if (operations.Count == 0) return;
             int maxGroupId = operations.Max(o => o.GroupId);
 
             for (int i = operations.Count - 1; i > 0; i--)
@@ -118,7 +116,7 @@ namespace DmpPlayground
         {
             for (int i = operations.Count - 1; i > 0; i--)
             {
-                if (operations[i].Location == operations[i - 1].Location
+                if (operations[i].NewLocation == operations[i - 1].NewLocation
                     && operations[i - 1].Operator == "del"
                     && operations[i].Operator == "ins")
                 {
@@ -140,28 +138,73 @@ namespace DmpPlayground
         {
             List<YXEditOperation> operations = new List<YXEditOperation>();
 
-            int y = 1, x = 0;
+            int y = 1, x = 1, oy = 1, ox = 1;
+            StringBuilder token = new StringBuilder();
+
             foreach (Diff diff in diffs)
             {
-                foreach (Match match in _lineRegex.Matches(diff.text))
+                foreach (char c in diff.text)
                 {
-                    foreach (string token in match.Groups[1].Value.Split(' ',
-                        StringSplitOptions.RemoveEmptyEntries))
+                    switch (c)
                     {
-                        x++;
-                        operations.Add(new YXEditOperation
-                        {
-                            Location = $"{y}.{x}",
-                            Operator = GetEditOperation(diff.operation),
-                            Value = token
-                        });
-                        if (diff.operation == Operation.DELETE) x--;
+                        case ' ':
+                            if (token.Length > 0)
+                            {
+                                YXEditOperation op = new YXEditOperation
+                                {
+                                    OldLocation = $"{oy}.{ox}",
+                                    NewLocation = $"{y}.{x}",
+                                    Operator = GetEditOperation(diff.operation),
+                                    Value = token.ToString()
+                                };
+                                operations.Add(op);
+                                if (op.Operator != "del" && op.Operator != "mvd")
+                                    x++;
+                                if (op.Operator != "ins" && op.Operator != "mvi")
+                                    ox++;
+                            }
+                            token.Clear();
+                            break;
+                        case '\r':
+                            break;
+                        case '\n':
+                            if (token.Length > 0)
+                            {
+                                operations.Add(new YXEditOperation
+                                {
+                                    OldLocation = $"{oy}.{ox}",
+                                    NewLocation = $"{y}.{x}",
+                                    Operator = GetEditOperation(diff.operation),
+                                    Value = token.ToString()
+                                });
+                            }
+                            token.Clear();
+
+                            if (diff.operation != Operation.DELETE)
+                            {
+                                y++;
+                                x = 1;
+                            }
+                            if (diff.operation != Operation.INSERT)
+                            {
+                                oy++;
+                                ox = 1;
+                            }
+                            break;
+                        default:
+                            token.Append(c);
+                            break;
                     }
-                    if (match.Groups[2].Length > 0)
+                }
+                if (token.Length > 0)
+                {
+                    operations.Add(new YXEditOperation
                     {
-                        y++;
-                        x = 0;
-                    }
+                        OldLocation = $"{oy}.{ox}",
+                        NewLocation = $"{y}.{x}",
+                        Operator = GetEditOperation(diff.operation),
+                        Value = token.ToString()
+                    });
                 }
             }
 

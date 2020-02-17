@@ -94,22 +94,14 @@ namespace DmpPlayground
             _txtA.Focus();
         }
 
-        private string ReplaceCrLf(string text)
-        {
-            // https://superuser.com/questions/382163/how-do-i-visualize-cr-lf-in-word
-            text = text.Replace('\r', '\u21a9');
-            text = text.Replace('\n', '\u240d');
-            return text;
-        }
-
         private string DumpDiffs(IList<Diff> diffs)
         {
             StringBuilder sb = new StringBuilder();
             int n = 0;
             foreach (Diff diff in diffs)
             {
-                sb.AppendLine($"({++n})");
-                sb.AppendLine(ReplaceCrLf(diff.ToString()));
+                sb.Append('(').Append(++n).AppendLine(")");
+                sb.AppendLine(YXEditOperation.FilterTextForDisplay(diff.ToString()));
             }
             return sb.ToString();
         }
@@ -121,7 +113,7 @@ namespace DmpPlayground
             foreach (YXEditOperation op in operations)
             {
                 sb.Append('(').Append(++n).AppendLine(")");
-                sb.AppendLine(ReplaceCrLf(op.ToString()));
+                sb.AppendLine(op.ToString());
             }
             return sb.ToString();
         }
