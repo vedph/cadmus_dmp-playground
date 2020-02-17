@@ -12,6 +12,12 @@
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:CustomCommands.CopyAToBCommand}"
                         Executed="CopyAToBCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.CopyBToACommand}"
+                        Executed="CopyBToACommand_Executed"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.SwapAWithBCommand}"
+                        Executed="SwapAWithBCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.CopyAToBCommand}"
+                        Executed="CopyAToBCommand_Executed"/>
         <CommandBinding Command="{x:Static local:CustomCommands.DiffCommand}"
                         Executed="DiffCommand_Executed"/>
         <CommandBinding Command="{x:Static local:CustomCommands.CleanDiffCommand}"
@@ -25,9 +31,13 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Menu>
-            <MenuItem Header="_File">
+            <MenuItem Header="_Text">
                 <MenuItem Header="Copy A&gt;B"
                           Command="{x:Static local:CustomCommands.CopyAToBCommand}"/>
+                <MenuItem Header="Copy B&gt;A"
+                          Command="{x:Static local:CustomCommands.CopyBToACommand}"/>
+                <MenuItem Header="Swap A&lt;-&gt;B"
+                          Command="{x:Static local:CustomCommands.SwapAWithBCommand}"/>
             </MenuItem>
             <MenuItem Header="_Diffing">
                 <MenuItem Header="_Plain diff"

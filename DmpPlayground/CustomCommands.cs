@@ -14,6 +14,26 @@ namespace DmpPlayground
                 }
             );
 
+        public static readonly RoutedUICommand CopyBToACommand =
+            new RoutedUICommand("CopyBToA",
+                "Copy the B text to A",
+                typeof(CustomCommands),
+                new InputGestureCollection
+                {
+                    new KeyGesture(Key.F2, ModifierKeys.Shift)
+                }
+            );
+
+        public static readonly RoutedUICommand SwapAWithBCommand =
+            new RoutedUICommand("SwapAWithB",
+                "Swap the A text with the B text",
+                typeof(CustomCommands),
+                new InputGestureCollection
+                {
+                    new KeyGesture(Key.F2, ModifierKeys.Control)
+                }
+            );
+
         public static readonly RoutedUICommand DiffCommand =
             new RoutedUICommand("Diff",
                 "Calculate plain diffs",

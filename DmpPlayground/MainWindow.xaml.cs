@@ -133,6 +133,21 @@ namespace DmpPlayground
             _txtB.Focus();
         }
 
+        private void CopyBToACommand_Executed(object sender,
+            ExecutedRoutedEventArgs e)
+        {
+            TextA = _textB;
+            _txtA.Focus();
+        }
+
+        private void SwapAWithBCommand_Executed(object sender,
+            ExecutedRoutedEventArgs e)
+        {
+            string b = _textB;
+            TextB = TextA;
+            TextA = b;
+        }
+
         private void DiffCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Diff(false);
