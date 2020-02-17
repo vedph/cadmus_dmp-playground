@@ -149,19 +149,21 @@ namespace DmpPlayground
                     {
                         case ' ':
                             // space ends the current token
-                            if (token.Length == 0) break;
-                            operations.Add(new YXEditOperation
+                            if (token.Length > 0)
                             {
-                                OldLocation = $"{oy}.{ox}",
-                                NewLocation = $"{y}.{x}",
-                                Operator = GetEditOperation(diff.operation),
-                                Value = token.ToString()
-                            });
+                                operations.Add(new YXEditOperation
+                                {
+                                    OldLocation = $"{oy}.{ox}",
+                                    NewLocation = $"{y}.{x}",
+                                    Operator = GetEditOperation(diff.operation),
+                                    Value = token.ToString()
+                                });
+                                token.Clear();
+                            }
                             // if this token was not removed, inc new-x
                             if (diff.operation != Operation.DELETE) x++;
                             // if this token was not inserted, inc old-x
                             if (diff.operation != Operation.INSERT) ox++;
-                            token.Clear();
                             break;
 
                         case '\r':
@@ -209,6 +211,7 @@ namespace DmpPlayground
                         Operator = GetEditOperation(diff.operation),
                         Value = token.ToString()
                     });
+                    token.Clear();
                 }
             }
 
