@@ -148,26 +148,27 @@ namespace DmpPlayground
                     switch (c)
                     {
                         case ' ':
-                            if (token.Length > 0)
+                            // space ends the current token
+                            if (token.Length == 0) break;
+                            operations.Add(new YXEditOperation
                             {
-                                YXEditOperation op = new YXEditOperation
-                                {
-                                    OldLocation = $"{oy}.{ox}",
-                                    NewLocation = $"{y}.{x}",
-                                    Operator = GetEditOperation(diff.operation),
-                                    Value = token.ToString()
-                                };
-                                operations.Add(op);
-                                if (op.Operator != "del" && op.Operator != "mvd")
-                                    x++;
-                                if (op.Operator != "ins" && op.Operator != "mvi")
-                                    ox++;
-                            }
+                                OldLocation = $"{oy}.{ox}",
+                                NewLocation = $"{y}.{x}",
+                                Operator = GetEditOperation(diff.operation),
+                                Value = token.ToString()
+                            });
+                            // if this token was not removed, inc new-x
+                            if (diff.operation != Operation.DELETE) x++;
+                            // if this token was not inserted, inc old-x
+                            if (diff.operation != Operation.INSERT) ox++;
                             token.Clear();
                             break;
+
                         case '\r':
                             break;
                         case '\n':
+                            // CR+LF or just LF end the current line;
+                            // save a pending token
                             if (token.Length > 0)
                             {
                                 operations.Add(new YXEditOperation
@@ -180,6 +181,7 @@ namespace DmpPlayground
                             }
                             token.Clear();
 
+                            // next line
                             if (diff.operation != Operation.DELETE)
                             {
                                 y++;
@@ -196,6 +198,8 @@ namespace DmpPlayground
                             break;
                     }
                 }
+
+                // add the last pending token if any
                 if (token.Length > 0)
                 {
                     operations.Add(new YXEditOperation
