@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DmpPlayground
+namespace Dmp.Core
 {
     /// <summary>
     /// YX-coordinates-based edit operation diff adapter.
@@ -37,13 +37,13 @@ namespace DmpPlayground
 
         private string GetEditOperation(Operation op)
         {
-            return op switch
+            switch(op)
             {
-                Operation.EQUAL => "equ",
-                Operation.INSERT => "ins",
-                Operation.DELETE => "del",
-                _ => null,
-            };
+                case Operation.EQUAL: return YXEditOperation.EQU;
+                case Operation.INSERT: return YXEditOperation.INS;
+                case Operation.DELETE: return YXEditOperation.DEL;
+                default: return null;
+            }
         }
 
         private static int LocateNextOperationWithValue(
@@ -75,15 +75,15 @@ namespace DmpPlayground
 
             for (int i = 0; i < operations.Count - 1; i++)
             {
-                if (operations[i].Operator == "del")
+                if (operations[i].Operator == YXEditOperation.DEL)
                 {
                     int j = LocateNextOperationWithValue(
                         operations, i + 1, operations[i].Value);
                     if (j > -1)
                     {
-                        operations[i].Operator = "mvd";
+                        operations[i].Operator = YXEditOperation.MVD;
                         operations[i].GroupId = ++maxGroupId;
-                        operations[j].Operator = "mvi";
+                        operations[j].Operator = YXEditOperation.MVI;
                         operations[j].GroupId = maxGroupId;
                     }
                 }
@@ -97,15 +97,15 @@ namespace DmpPlayground
 
             for (int i = operations.Count - 1; i > 0; i--)
             {
-                if (operations[i].Operator == "del")
+                if (operations[i].Operator == YXEditOperation.DEL)
                 {
                     int j = LocatePrevOperationWithValue(
                     operations, i - 1, operations[i].Value);
                     if (j > -1)
                     {
-                        operations[i].Operator = "mvd";
+                        operations[i].Operator = YXEditOperation.MVD;
                         operations[i].GroupId = ++maxGroupId;
-                        operations[j].Operator = "mvi";
+                        operations[j].Operator = YXEditOperation.MVI;
                         operations[j].GroupId = maxGroupId;
                     }
                 }
@@ -116,11 +116,11 @@ namespace DmpPlayground
         {
             for (int i = operations.Count - 1; i > 0; i--)
             {
-                if (operations[i].NewLocation == operations[i - 1].NewLocation
-                    && operations[i - 1].Operator == "del"
-                    && operations[i].Operator == "ins")
+                if (operations[i].Location == operations[i - 1].Location
+                    && operations[i - 1].Operator == YXEditOperation.DEL
+                    && operations[i].Operator == YXEditOperation.INS)
                 {
-                    operations[i - 1].Operator = "rep";
+                    operations[i - 1].Operator = YXEditOperation.REP;
                     operations[i - 1].OldValue = operations[i - 1].Value;
                     operations[i - 1].Value = operations[i].Value;
                     operations.RemoveAt(i);
@@ -154,7 +154,7 @@ namespace DmpPlayground
                                 operations.Add(new YXEditOperation
                                 {
                                     OldLocation = $"{oy}.{ox}",
-                                    NewLocation = $"{y}.{x}",
+                                    Location = $"{y}.{x}",
                                     Operator = GetEditOperation(diff.operation),
                                     Value = token.ToString()
                                 });
@@ -176,7 +176,7 @@ namespace DmpPlayground
                                 operations.Add(new YXEditOperation
                                 {
                                     OldLocation = $"{oy}.{ox}",
-                                    NewLocation = $"{y}.{x}",
+                                    Location = $"{y}.{x}",
                                     Operator = GetEditOperation(diff.operation),
                                     Value = token.ToString()
                                 });
@@ -207,7 +207,7 @@ namespace DmpPlayground
                     operations.Add(new YXEditOperation
                     {
                         OldLocation = $"{oy}.{ox}",
-                        NewLocation = $"{y}.{x}",
+                        Location = $"{y}.{x}",
                         Operator = GetEditOperation(diff.operation),
                         Value = token.ToString()
                     });

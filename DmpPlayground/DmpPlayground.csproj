@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dmp.Core\Dmp.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="App.ico" />
   </ItemGroup>
 

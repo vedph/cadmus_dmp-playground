@@ -1,7 +1,7 @@
 ﻿using DiffMatchPatch;
 using System.Collections.Generic;
 
-namespace DmpPlayground
+namespace Dmp.Core
 {
     /// <summary>
     /// Interface implemented by <see cref="Diff"/> to edit operations

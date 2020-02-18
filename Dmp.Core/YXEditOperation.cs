@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DmpPlayground
+namespace Dmp.Core
 {
     /// <summary>
     /// A general purpose edit operation generated from diffing and based
@@ -8,15 +8,33 @@ namespace DmpPlayground
     /// </summary>
     public class YXEditOperation
     {
+        /// <summary>The equals operator (<c>equ</c>).</summary>
+        public const string EQU = "equ";
+
+        /// <summary>The delete operator (<c>del</c>).</summary>
+        public const string DEL = "del";
+
+        /// <summary>The insert operator (<c>ins</c>).</summary>
+        public const string INS = "ins";
+
+        /// <summary>The replace operator (<c>rep</c>).</summary>
+        public const string REP = "rep";
+
+        /// <summary>The move-delete operator (<c>mvd</c>).</summary>
+        public const string MVD = "mvd";
+
+        /// <summary>The move-insert operator (<c>mvi</c>).</summary>
+        public const string MVI = "mvi";
+
         /// <summary>
         /// Gets or sets the old location.
         /// </summary>
         public string OldLocation { get; set; }
 
         /// <summary>
-        /// Gets or sets the new location.
+        /// Gets or sets the location.
         /// </summary>
-        public string NewLocation { get; set; }
+        public string Location { get; set; }
 
         /// <summary>
         /// Gets or sets the operator.
@@ -67,7 +85,7 @@ namespace DmpPlayground
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(OldLocation).Append("->")
-                .Append(NewLocation).Append(' ')
+                .Append(Location).Append(' ')
                 .Append(Operator).Append(' ');
 
             if (OldValue != null)

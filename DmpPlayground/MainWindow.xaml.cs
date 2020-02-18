@@ -1,4 +1,5 @@
 ﻿using DiffMatchPatch;
+using Dmp.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
