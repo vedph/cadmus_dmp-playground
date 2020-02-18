@@ -44,6 +44,7 @@ namespace Dmp.Core.Test
             Assert.Equal("2.1", op.OldLocation);
         }
 
+        #region Horizontal, Delete
         [Fact]
         public void Adapt_HrzDelFirst_Ok()
         {
@@ -148,5 +149,223 @@ namespace Dmp.Core.Test
             Assert.Equal("2.1", op.Location);
             Assert.Equal("2.1", op.OldLocation);
         }
+        #endregion
+
+        #region Horizontal, Replace
+        [Fact]
+        public void Adapt_HrzRepFirst_Ok()
+        {
+            const string a = "alpha beta gamma\ndelta";
+            const string b = "x beta gamma\ndelta";
+
+            IList<YXEditOperation> operations = GetOperations(a, b);
+
+            Assert.Equal(4, operations.Count);
+
+            YXEditOperation op = operations[0];
+            Assert.Equal(YXEditOperation.REP, op.Operator);
+            Assert.Equal("x", op.Value);
+            Assert.Equal("alpha", op.OldValue);
+            Assert.Equal("1.1", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[1];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("beta", op.Value);
+            Assert.Equal("1.2", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[2];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("gamma", op.Value);
+            Assert.Equal("1.3", op.Location);
+            Assert.Equal("1.3", op.OldLocation);
+
+            op = operations[3];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("delta", op.Value);
+            Assert.Equal("2.1", op.Location);
+            Assert.Equal("2.1", op.OldLocation);
+        }
+
+        [Fact]
+        public void Adapt_HrzRepMid_Ok()
+        {
+            const string a = "alpha beta gamma\ndelta";
+            const string b = "alpha x gamma\ndelta";
+
+            IList<YXEditOperation> operations = GetOperations(a, b);
+
+            Assert.Equal(4, operations.Count);
+
+            YXEditOperation op = operations[0];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("alpha", op.Value);
+            Assert.Equal("1.1", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[1];
+            Assert.Equal(YXEditOperation.REP, op.Operator);
+            Assert.Equal("x", op.Value);
+            Assert.Equal("beta", op.OldValue);
+            Assert.Equal("1.2", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[2];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("gamma", op.Value);
+            Assert.Equal("1.3", op.Location);
+            Assert.Equal("1.3", op.OldLocation);
+
+            op = operations[3];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("delta", op.Value);
+            Assert.Equal("2.1", op.Location);
+            Assert.Equal("2.1", op.OldLocation);
+        }
+
+        [Fact]
+        public void Adapt_HrzRepLast_Ok()
+        {
+            const string a = "alpha beta gamma\ndelta";
+            const string b = "alpha beta x\ndelta";
+
+            IList<YXEditOperation> operations = GetOperations(a, b);
+
+            Assert.Equal(4, operations.Count);
+
+            YXEditOperation op = operations[0];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("alpha", op.Value);
+            Assert.Equal("1.1", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[1];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("beta", op.Value);
+            Assert.Equal("1.2", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[2];
+            Assert.Equal(YXEditOperation.REP, op.Operator);
+            Assert.Equal("x", op.Value);
+            Assert.Equal("gamma", op.OldValue);
+            Assert.Equal("1.3", op.Location);
+            Assert.Equal("1.3", op.OldLocation);
+
+            op = operations[3];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("delta", op.Value);
+            Assert.Equal("2.1", op.Location);
+            Assert.Equal("2.1", op.OldLocation);
+        }
+        #endregion
+
+        #region Horizontal, Insert
+        [Fact]
+        public void Adapt_HrzInsFirst_Ok()
+        {
+            const string a = "alpha beta\ngamma";
+            const string b = "x alpha beta\ngamma";
+
+            IList<YXEditOperation> operations = GetOperations(a, b);
+
+            Assert.Equal(4, operations.Count);
+
+            YXEditOperation op = operations[0];
+            Assert.Equal(YXEditOperation.INS, op.Operator);
+            Assert.Equal("x", op.Value);
+            Assert.Equal("1.1", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[1];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("alpha", op.Value);
+            Assert.Equal("1.2", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[2];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("beta", op.Value);
+            Assert.Equal("1.3", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[3];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("gamma", op.Value);
+            Assert.Equal("2.1", op.Location);
+            Assert.Equal("2.1", op.OldLocation);
+        }
+
+        [Fact]
+        public void Adapt_HrzInsMid_Ok()
+        {
+            const string a = "alpha beta\ngamma";
+            const string b = "alpha x beta\ngamma";
+
+            IList<YXEditOperation> operations = GetOperations(a, b);
+
+            Assert.Equal(4, operations.Count);
+
+            YXEditOperation op = operations[0];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("alpha", op.Value);
+            Assert.Equal("1.1", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[1];
+            Assert.Equal(YXEditOperation.INS, op.Operator);
+            Assert.Equal("x", op.Value);
+            Assert.Equal("1.2", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[2];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("beta", op.Value);
+            Assert.Equal("1.3", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[3];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("gamma", op.Value);
+            Assert.Equal("2.1", op.Location);
+            Assert.Equal("2.1", op.OldLocation);
+        }
+
+        [Fact]
+        public void Adapt_HrzInsLast_Ok()
+        {
+            const string a = "alpha beta\ngamma";
+            const string b = "alpha beta x\ngamma";
+
+            IList<YXEditOperation> operations = GetOperations(a, b);
+
+            Assert.Equal(4, operations.Count);
+
+            YXEditOperation op = operations[0];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("alpha", op.Value);
+            Assert.Equal("1.1", op.Location);
+            Assert.Equal("1.1", op.OldLocation);
+
+            op = operations[1];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("beta", op.Value);
+            Assert.Equal("1.2", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[2];
+            Assert.Equal(YXEditOperation.INS, op.Operator);
+            Assert.Equal("x", op.Value);
+            Assert.Equal("1.3", op.Location);
+            Assert.Equal("1.2", op.OldLocation);
+
+            op = operations[3];
+            Assert.Equal(YXEditOperation.EQU, op.Operator);
+            Assert.Equal("gamma", op.Value);
+            Assert.Equal("2.1", op.Location);
+            Assert.Equal("2.1", op.OldLocation);
+        }
+        #endregion
     }
 }
