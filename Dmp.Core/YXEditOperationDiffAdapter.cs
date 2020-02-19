@@ -128,6 +128,64 @@ namespace Dmp.Core
             }
         }
 
+        private static YXEditOperation JoinOperations(int first, int last,
+            IList<YXEditOperation> operations)
+        {
+            YXEditOperation joined = new YXEditOperation
+            {
+                Operator = YXEditOperation.REP,
+                Location = operations[first].Location,
+                OldLocation = operations[first].OldLocation
+            };
+            StringBuilder value = new StringBuilder();
+            StringBuilder oldValue = new StringBuilder();
+
+            for (int i = first; i <= last; i++)
+            {
+                switch (operations[i].Operator)
+                {
+                    case YXEditOperation.EQU:
+                        value.Append(operations[i].Value);
+                        oldValue.Append(operations[i].Value);
+                        break;
+                    case YXEditOperation.DEL:
+                        oldValue.Append(operations[i].Value);
+                        break;
+                    case YXEditOperation.INS:
+                        value.Append(operations[i].Value);
+                        break;
+                }
+            }
+
+            joined.Value = value.ToString();
+            joined.OldValue = oldValue.ToString();
+
+            return joined;
+        }
+
+        private static void JoinSplitTokens(IList<YXEditOperation> operations)
+        {
+            int i = operations.Count - 1;
+            while (i > 0)
+            {
+                if (operations[i].OldLocation == operations[i - 1].OldLocation)
+                {
+                    string loc = operations[i].OldLocation;
+                    int j = i - 1;
+                    while (j > 0 && operations[j - 1].OldLocation == loc) j--;
+                    if (i - j > 1)
+                    {
+                        YXEditOperation joined = JoinOperations(j, i, operations);
+                        for (int del = i; del >= j; del--) operations.RemoveAt(del);
+                        operations.Insert(j, joined);
+                        i = j - 1;
+                    }
+                    else i--;
+                }
+                else i--;
+            }
+        }
+
         /// <summary>
         /// Adapts the specified diffs list into a list of
         /// <see cref="YXEditOperation"/>'s.
@@ -214,6 +272,10 @@ namespace Dmp.Core
                     token.Clear();
                 }
             }
+
+            // ignore sub-token changes, joining all of them under a token-level
+            // replacement
+            JoinSplitTokens(operations);
 
             if (IsMoveEnabled)
             {
