@@ -43,13 +43,14 @@ namespace Dmp.Core
         public string Operator { get; set; }
 
         /// <summary>
-        /// Gets or sets the text value.
+        /// Gets or sets the text value involved in the operation.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
         /// Gets or sets the old text value. This is used for replacements or
-        /// deletions only.
+        /// deletions only, which require to store two different values
+        /// instead of just one.
         /// </summary>
         public string OldValue { get; set; }
 
