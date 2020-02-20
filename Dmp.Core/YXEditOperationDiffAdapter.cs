@@ -168,11 +168,19 @@ namespace Dmp.Core
             int i = operations.Count - 1;
             while (i > 0)
             {
-                if (operations[i].OldLocation == operations[i - 1].OldLocation)
+                if (operations[i].OldLocation == operations[i - 1].OldLocation
+                    && operations[i].Location == operations[i - 1].Location)
                 {
-                    string loc = operations[i].OldLocation;
+                    string loc = operations[i].Location;
+                    string oldLoc = operations[i].OldLocation;
                     int j = i - 1;
-                    while (j > 0 && operations[j - 1].OldLocation == loc) j--;
+                    while (j > 0
+                        && operations[j - 1].OldLocation == oldLoc
+                        && operations[j - 1].Location == loc)
+                    {
+                        j--;
+                    }
+
                     if (i - j > 1)
                     {
                         YXEditOperation joined = JoinOperations(j, i, operations);

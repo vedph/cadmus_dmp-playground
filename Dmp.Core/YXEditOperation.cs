@@ -32,7 +32,8 @@ namespace Dmp.Core
         public string OldLocation { get; set; }
 
         /// <summary>
-        /// Gets or sets the location.
+        /// Gets or sets the location. In a delete operation, this is meaningless
+        /// and you can refer only to the <see cref="OldLocation"/>.
         /// </summary>
         public string Location { get; set; }
 
@@ -47,7 +48,8 @@ namespace Dmp.Core
         public string Value { get; set; }
 
         /// <summary>
-        /// Gets or sets the old text value. This is used for replacements only.
+        /// Gets or sets the old text value. This is used for replacements or
+        /// deletions only.
         /// </summary>
         public string OldValue { get; set; }
 
